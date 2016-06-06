@@ -1,0 +1,39 @@
+[Unit]
+Description=Logstash
+Documentation=http://www.elastic.co
+Wants=elasticsearch.service
+After=elasticsearch.service
+
+[Service]
+Environment=LS_HEAP_SIZE="1g"
+Environment=LS_JAVA_OPTS=""
+Environment=LS_CONF_DIR=/etc/logstash/conf.d
+Environment=LS_LOG_FILE=/var/log/logstash/logstash.log
+Environment=LS_OPTS=""
+EnvironmentFile=-/etc/sysconfig/logstash
+
+User={{ logstash_user }}
+Group={{ logstash_group }}
+
+ExecStart=/opt/logstash/bin/logstash agent -f $LS_CONF_DIR -l $LS_LOG_FILE $LS_OPTS
+
+StandardOutput=journal
+StandardError=inherit
+
+# When a JVM receives a SIGTERM signal it exits with code 143
+SuccessExitStatus=143
+
+# Specifies the maximum file descriptor number that can be opened by this process
+LimitNOFILE={{ logstash_open_files }}
+
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=0
+
+# SIGTERM signal is used to stop the Java process
+KillSignal=SIGTERM
+
+# Java process is never killed
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target

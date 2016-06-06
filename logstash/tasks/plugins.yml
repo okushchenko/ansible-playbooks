@@ -1,0 +1,12 @@
+---
+- name: Install logstash plugins
+  command: >
+    /opt/logstash/bin/plugin install {{ item }}
+  args:
+    creates: "/opt/logstash/vendor/bundle/jruby/1.9/gems/{{ item }}*"
+  with_items: "{{ logstash_plugins }}"
+
+- name: Update logstash plugins
+  shell: >
+    yes Y | /opt/logstash/bin/plugin update
+  when: logstash_plugins_update

@@ -1,0 +1,3 @@
+---
+logstash_java: "java-1.8.0-openjdk.x86_64"
+logstash_default_file: "/etc/sysconfig/logstash"

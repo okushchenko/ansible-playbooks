@@ -1,0 +1,12 @@
+---
+- name: RedHat - Ensure Java is installed
+  yum: >
+    name={{ logstash_java }}
+  when: ansible_os_family == 'RedHat'
+
+- name: Debian - Ensure Java is installed
+  apt: >
+    name={{ logstash_java }}
+    update_cache=yes
+    force=yes
+  when: ansible_os_family == 'Debian'

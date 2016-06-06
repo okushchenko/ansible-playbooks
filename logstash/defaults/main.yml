@@ -1,0 +1,35 @@
+---
+logstash_major_version: "2.2"
+logstash_version: "2.2.2"
+
+# Override Java location
+logstash_javacmd: /usr/bin/java
+# Arguments to pass to logstash agent
+logstash_opts: ""
+# Arguments to pass to java
+logstash_heap_size: "{{ (ansible_memtotal_mb * 0.5) | int }}m"
+logstash_java_opts: ""
+# user id to be invoked as; for upstart: edit /etc/init/logstash.conf
+logstash_user: logstash
+logstash_group: logstash
+# logstash logging
+logstash_log_file: /var/log/logstash/logstash.log
+logstash_use_gc_logging: ""
+logstash_gc_log_file: /var/log/logstash/logstash-gc.log
+# logstash configuration directory
+logstash_conf_dir: /etc/logstash/conf.d
+# Open file limit; cannot be overridden in upstart
+logstash_open_files: 16384
+
+logstash_ssl_dir: /etc/pki/logstash
+logstash_ssl_certificate: ""
+logstash_ssl_key: ""
+
+logstash_enabled_on_boot: yes
+logstash_plugins: []
+logstash_plugins_update: False
+
+logstash_input: {}
+logstash_filter: {}
+logstash_output: {}
+logstash_config: "{{ logstash_input | combine(logstash_filter) | combine(logstash_output) }}"

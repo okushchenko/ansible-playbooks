@@ -1,0 +1,31 @@
+---
+- name: Configure default settings for Logstash
+  template: >
+    src=defaults.conf.j2
+    dest={{ logstash_default_file }}
+    backup=yes
+  notify:
+    - Restart logstash
+
+- name: Search for existing logstash configs
+  command: >
+    find /etc/logstash/conf.d/ -type f
+  register: logstash_configs_result
+  changed_when: False
+
+- name: Remove undefined configs
+  file: >
+    state=absent
+    path={{ item }}
+  when: "item | basename not in logstash_config"
+  with_items: "{{ logstash_configs_result.stdout_lines }}"
+  notify:
+    - Restart logstash
+
+- name: Create Logstash configuration files
+  copy: >
+    content={{ item.value }}
+    dest=/etc/logstash/conf.d/{{ item.key }}
+  with_dict: "{{ logstash_config }}"
+  notify:
+    - Restart logstash

@@ -1,0 +1,17 @@
+---
+- name: Copy Systemd File for Instance
+  template: >
+    src=logstash.service.j2
+    dest=/usr/lib/systemd/system/logstash.service
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - Reload systemd daemon
+    - Restart logstash
+
+- meta: flush_handlers
+
+- name: Ensure Logstash is started and enabled on boot
+  service: >
+    name=logstash
+    state=started
+    enabled={{ logstash_enabled_on_boot }}

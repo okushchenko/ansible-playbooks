@@ -1,0 +1,24 @@
+###############################
+# Default settings for logstash
+###############################
+
+#  Completely override the defauls set of JAVA_OPTS provided by logstash
+#JAVA_OPTS="xxx"
+
+# Override Java location
+JAVACMD={{ logstash_javacmd }}
+
+# Arguments to pass to logstash agent
+LS_OPTS="{{ logstash_opts }}"
+
+# Arguments to pass to java
+LS_HEAP_SIZE={{ logstash_heap_size }}
+LS_JAVA_OPTS="{{ logstash_java_opts }}"
+
+# logstash logging
+LS_LOG_FILE={{ logstash_log_file }}
+LS_USE_GC_LOGGING={{ logstash_use_gc_logging }}
+LS_GC_LOG_FILE={{ logstash_gc_log_file }}
+
+# logstash configuration directory
+LS_CONF_DIR={{ logstash_conf_dir }}

@@ -1,0 +1,33 @@
+---
+- name: os-specific vars
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - logstash
+    - logstash_config
+    - logstash_service
+
+- include: java.yml
+  tags:
+    - logstash
+
+- include: "setup-{{ ansible_os_family }}.yml"
+  tags:
+    - logstash
+
+- include: config.yml
+  tags:
+    - logstash_config
+    - logstash
+
+- include: plugins.yml
+  tags:
+    - logstash
+
+- include: ssl.yml
+  tags:
+    - logstash
+
+- include: service.yml
+  tags:
+    - logstash
+    - logstash_service
