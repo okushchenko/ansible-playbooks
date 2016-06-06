@@ -1,0 +1,16 @@
+---
+- name: RedHat - Add elastic.co gpg key
+  rpm_key: >
+    key={{ filebeat_gpg_url }}
+
+- name: RedHat - Add beats repo
+  template: >
+    src=beats.repo.j2
+    dest=/etc/yum.repos.d/beats.repo
+
+- name: RedHat - Install filebeat
+  yum: >
+    name=filebeat
+    state={{ filebeat_package_state }}
+  notify:
+    - Restart filebeat

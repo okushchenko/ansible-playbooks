@@ -1,0 +1,30 @@
+---
+- name: Template config
+  template: >
+    src=filebeat.yml.j2
+    dest=/etc/filebeat/filebeat.yml
+  notify:
+    - Restart filebeat
+
+- name: Ensure filebeat SSL key pair directory exists
+  file: >
+    path={{ filebeat_ssl_dir }}
+    state=directory
+
+- name: Copy SSL certs for filebeat
+  copy: >
+    content={{ lookup('file', item) }}
+    dest={{ filebeat_ssl_dir }}/{{ item | basename }}
+    mode=0640
+  with_items:
+    - "{{ filebeat_ssl_key }}"
+    - "{{ filebeat_ssl_certificate }}"
+    - "{{ filebeat_ssl_ca }}"
+  when: item != ""
+  notify: Restart filebeat
+
+- name: Start and enable filebeat
+  service: >
+    name=filebeat
+    state=started
+    enabled=true

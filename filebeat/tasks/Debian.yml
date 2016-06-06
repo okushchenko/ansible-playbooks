@@ -1,0 +1,17 @@
+---
+- name: Debian - Add elastic.co gpg key
+  apt_key: >
+    url={{ filebeat_gpg_url }}
+
+- name: Debian - Add beats repository
+  apt_repository: >
+    repo={{ filebeat_apt_repo }}
+    state=present
+    update_cache=yes
+
+- name: Debian - Install filebeat
+  apt: >
+    name=filebeat
+    state={{ filebeat_package_state }}
+  notify:
+    - Restart filebeat
