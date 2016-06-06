@@ -1,0 +1,39 @@
+---
+- name: check-parameters
+  include: check-parameters.yml
+  tags:
+    - elasticsearch
+
+- name: os-specific vars
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - elasticsearch
+
+- include: java.yml
+  tags:
+    - elasticsearch
+
+- include: setup-{{ ansible_os_family }}.yml
+  tags:
+    - elasticsearch
+
+- include: config.yml
+  tags:
+    - elasticsearch
+
+- include: plugins.yml
+  tags:
+    - elasticsearch
+
+- include: service.yml
+  tags:
+    - elasticsearch
+
+- include: shield.yml
+  tags:
+    - elasticsearch
+    - elasticsearch_shield
+
+- include: templates.yml
+  tags:
+    - elasticsearch

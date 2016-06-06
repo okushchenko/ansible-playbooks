@@ -1,0 +1,17 @@
+---
+- meta: flush_handlers
+
+- name: Start elasticsearch service
+  service: >
+    name=elasticsearch
+    state=started
+    enabled=yes
+  when: es_start_service
+
+- set_fact: >
+    http_port={{ es_config['http.port'] | default(9200) }}
+
+- name: Wait for elasticsearch to startup
+  wait_for: >
+    port={{ http_port }}
+    delay=10

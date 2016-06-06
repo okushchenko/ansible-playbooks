@@ -1,0 +1,32 @@
+---
+# This needs to removed installed plugins not those listed
+# if elasticsearch_install.changed i.e. we have changed ES version
+- name: Remove elasticsearch plugins
+  command: >
+    {{ es_home }}/bin/plugin remove {{ item }} --silent
+  ignore_errors: yes
+  with_items: "{{ es_plugins }}"
+  when: elasticsearch_install.changed
+  notify: restart elasticsearch
+  environment:
+    CONF_DIR: "{{ es_conf_dir }}"
+
+- name: Install elasticsearch plugins
+  command: >
+    {{ es_home }}/bin/plugin install {{ item }} --silent
+  register: plugin_installed
+  failed_when: "'Failed to install' in plugin_installed.stderr"
+  changed_when: plugin_installed.rc == 0
+  with_items: "{{ es_plugins }}"
+  notify: restart elasticsearch
+  environment:
+    CONF_DIR: "{{ es_conf_dir }}"
+    ES_INCLUDE: "{{ es_default_file }}"
+
+- name: Set Plugin Directory Permissions
+  file: >
+    state=directory
+    path={{ es_plugin_dir }}
+    owner={{ es_user }}
+    group={{ es_group }}
+    recurse=yes

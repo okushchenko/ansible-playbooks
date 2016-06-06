@@ -1,0 +1,30 @@
+---
+- name: copy role mapping file
+  template: >
+    src=role_mapping.yml.j2
+    dest={{ es_conf_dir }}/shield/role_mapping.yml
+    owner={{ es_user }}
+    group={{ es_group }}
+  notify: Restart elasticsearch
+
+- name: copy roles file
+  template: >
+    src=roles.yml.j2
+    dest={{ es_conf_dir }}/shield/roles.yml
+    owner={{ es_user }}
+    group={{ es_group }}
+  notify: Restart elasticsearch
+
+- name: create admin user
+  command: >
+    /usr/share/elasticsearch/bin/shield/esusers useradd {{ es_admin_user }} -r admin -p {{ es_admin_password }}
+  register: result
+  changed_when: result.rc == 0
+  failed_when: result.rc == 1
+
+- name: create users
+  command: >
+    /usr/share/elasticsearch/bin/shield/esusers useradd {{ item.key }} -r {{ item.value.roles | join(",") }} -p {{ item.value.password }}
+  with_dict: "{{ es_users }}"
+  changed_when: result.rc == 0
+  failed_when: result.rc == 1

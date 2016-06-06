@@ -1,0 +1,40 @@
+---
+- file: >
+    path=/etc/elasticsearch/templates
+    state=directory
+    owner={{ es_user }}
+    group={{ es_group }}
+
+- name: Search for existing templates
+  command: >
+    find /etc/elasticsearch/templates -type f
+  register: es_templates_result
+  changed_when: False
+
+- name: Remove undefined templates
+  file: >
+    state=absent
+    path={{ item }}
+  when: "item | basename | splitext | first not in es_templates"
+  with_items: "{{ es_templates_result.stdout_lines }}"
+
+- name: Delete undefined templates
+  command: >
+    curl -u {{ es_admin_user }}:{{ es_admin_password }} -sL -XDELETE http://localhost:{{ http_port }}/_template/{{ item | basename | splitext | first }}
+  when: "item | basename | splitext | first not in es_templates"
+  with_items: "{{ es_templates_result.stdout_lines }}"
+  changed_when: False
+
+- name: Create templates files
+  copy: >
+    content={{ item.value }}
+    dest=/etc/elasticsearch/templates/{{ item.key }}.json
+    owner={{ es_user }}
+    group={{ es_group }}
+  with_dict: "{{ es_templates }}"
+
+- name: Install templates
+  command: >
+    curl -u {{ es_admin_user }}:{{ es_admin_password }} -sL -XPUT http://localhost:{{ http_port }}/_template/{{ item.key }} -d @/etc/elasticsearch/templates/{{ item.key }}.json
+  with_dict: "{{ es_templates }}"
+  changed_when: False

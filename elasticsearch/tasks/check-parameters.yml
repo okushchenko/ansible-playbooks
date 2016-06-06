@@ -1,0 +1,22 @@
+---
+- set_fact: >
+    es_mlock_enabled={{ es_config['bootstrap.mlockall'] is defined and es_config['bootstrap.mlockall'] == True }}
+
+- set_fact: >
+    es_multi_cast={{ (es_version | version_compare('2.0', '<') and es_config['discovery.zen.ping.multicast.enabled'] is not defined) or (es_config['discovery.zen.ping.multicast.enabled'] is defined and es_config['discovery.zen.ping.multicast.enabled']) }}
+
+- debug: >
+    msg="WARNING - It is recommended you specify the parameter 'http.port' when multicast is disabled"
+  when: not es_multi_cast and es_config['http.port'] is not defined
+
+- debug: >
+    msg="WARNING - It is recommended you specify the parameter 'transport.tcp.port' when multicast is disabled"
+  when: not es_multi_cast and es_config['transport.tcp.port'] is not defined
+
+- debug: >
+    msg="WARNING - It is recommended you specify the parameter 'discovery.zen.ping.unicast.hosts' when multicast is disabled"
+  when: not es_multi_cast and es_config['discovery.zen.ping.unicast.hosts'] is not defined
+
+- fail: >
+    msg="If locking memory with bootstrap.mlockall a heap size must be specified"
+  when: es_config['bootstrap.mlockall'] is defined and es_config['bootstrap.mlockall'] == True and es_heap_size is not defined
