@@ -1,0 +1,17 @@
+---
+- include: install.yml
+  tags:
+    - kibana
+
+- include: configure.yml
+  tags:
+    - kibana
+
+- include: ssl.yml
+  tags:
+    - kibana
+    - kibana_ssl
+
+- include: plugins.yml
+  tags:
+    - kibana

@@ -1,0 +1,15 @@
+[Unit]
+Description=Kibana
+Documentation=http://www.elastic.co
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/kibana
+User={{ kibana_user }}
+Group={{ kibana_group }}
+ExecStart=/opt/kibana/bin/kibana
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

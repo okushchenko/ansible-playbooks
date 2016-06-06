@@ -1,0 +1,21 @@
+---
+- name: ensure Kibana SSL directory exists
+  file: >
+    path={{ kibana_ssl_dir }}
+    state=directory
+    mode=0750
+    owner={{ kibana_user }}
+    group={{ kibana_group }}
+
+- name: copy SSL key and cert
+  copy: >
+    content={{ lookup('file', item) }}
+    dest={{ kibana_ssl_dir }}/{{ item | basename }}
+    mode=0640
+    owner={{ kibana_user }}
+    group={{ kibana_group }}
+  with_items:
+    - "{{ kibana_ssl_key }}"
+    - "{{ kibana_ssl_certificate }}"
+  when: item != ""
+  notify: restart kibana

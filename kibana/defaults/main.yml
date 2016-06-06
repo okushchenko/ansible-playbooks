@@ -1,0 +1,13 @@
+---
+kibana_major_version: "4.5"
+kibana_version: "4.5.1"
+kibana_user: kibana
+kibana_group: root
+kibana_config: {}
+kibana_options:
+  NODE_OPTIONS: "--max-old-space-size=256"
+kibana_ssl_dir: "/opt/kibana/ssl"
+kibana_ssl_key: ""
+kibana_ssl_certificate: ""
+kibana_home: "/opt/kibana"
+kibana_plugins: []

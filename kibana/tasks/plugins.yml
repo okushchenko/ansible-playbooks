@@ -1,0 +1,19 @@
+---
+# This needs to removed installed plugins not those listed
+# if kibana_install.changed i.e. we have changed Kibana version
+- name: Remove kibana plugins
+  command: >
+    {{ kibana_home }}/bin/kibana plugin -r {{ item }}
+  ignore_errors: yes
+  with_items: "{{ kibana_plugins }}"
+  when: elasticsearch_install.changed
+  notify: restart kibana
+
+- name: Install kibana plugins
+  command: >
+    {{ kibana_home }}/bin/kibana plugin -i {{ item }}
+  register: plugin_installed
+  failed_when: "'Failed to install' in plugin_installed.stderr"
+  changed_when: plugin_installed.rc == 0
+  with_items: "{{ kibana_plugins }}"
+  notify: restart kibana
